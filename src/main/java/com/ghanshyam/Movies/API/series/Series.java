@@ -1,7 +1,12 @@
 package com.ghanshyam.Movies.API.series;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.ghanshyam.Movies.API.movie.Movie;
+import com.ghanshyam.Movies.API.review.Review;
 import jakarta.persistence.*;
 
+import java.util.List;
 
 @Entity
 @Table(name = "series")
@@ -13,14 +18,28 @@ public class Series {
     String title;
     int release_year;
     int seasons;
-    float rating;
 
-    public Series(Long id, String title, int release_year, int seasons, float rating) {
+    public Series(Long id, String title, int release_year, int seasons) {
         this.id = id;
         this.title = title;
         this.release_year = release_year;
         this.seasons = seasons;
-        this.rating = rating;
+    }
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "series", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Review> reviews;
+
+    public Series(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     public Series() {
@@ -58,11 +77,4 @@ public class Series {
         this.seasons = seasons;
     }
 
-    public float getRating() {
-        return rating;
-    }
-
-    public void setRating(float rating) {
-        this.rating = rating;
-    }
 }
